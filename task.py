@@ -4,12 +4,9 @@ class Task:
         self.p = P
         self.c = C
         self.d = D
- 
 
 class Sched_Task:
-    def __init__(self, Task, s, e):
+    def __init__(self, Task, S, E):
         self.task = Task
-        self.start_time = s
-        self.end_time = e
-
-
+        self.start_time = S
+        self.end_time = E
