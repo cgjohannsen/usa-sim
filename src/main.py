@@ -2,7 +2,7 @@ import argparse
 import csv
 
 from task import *
-from edf_alg import *
+from edf_alg import EDF
 
 def read_csv(filename):
     task_set = []
@@ -24,12 +24,13 @@ def main():
     task_set = read_csv(args.file)
 
     # EDF schedule
-    edf_sched = edf_schedule(task_set)
-    if edf_sched is None:
-        print("Not schedulable")
-    else:
+    if EDF.sched_test(task_set):
+        edf_sched = EDF.schedule(task_set)
+        print(edf_sched)
         for t in edf_sched:
             print(t.task.id)
+    else:
+        print("Noit schedulable")
 
 if __name__ == "__main__":
     main()
