@@ -7,20 +7,16 @@ from rms_alg import RMS
 
 def read_csv(filename):
     task_set = []
-
     with open(filename, newline='') as f:
         reader = csv.reader(f)
         for row in reader:
             task_set.append(Task(row[0], row[1], row[2], row[3]))
-
     return task_set
 
 def write_csv(filename, sched_set):
     to_write = []
-
     for t in sched_set:
         to_write.append([t.task.id, t.start_time, t.end_time])
-
     with open(filename, 'w', newline='') as f:
         writer = csv.writer(f)
         writer.writerows(to_write)
@@ -43,12 +39,12 @@ def main():
         write_csv("rms.csv", rms_sched)
 
     # EDF schedule
-    #if EDF.sched_test(task_set):
-    #    edf_sched = EDF.schedule(task_set)
-    #    for t in edf_sched:
-    #        print(t.task.id + ", " + str(t.start_time) + ", " + str(t.end_time))
-    #else:
-    #    print("Not schedulable")
+    edf = EDF()
+    edf_sched = edf.schedule(task_set)
+    if edf_sched is None:
+        print("EDF not schedulable")
+    else:
+        write_csv("edf.csv", edf_sched)
 
 if __name__ == "__main__":
     main()

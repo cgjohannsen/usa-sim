@@ -1,47 +1,63 @@
 import sys
-
 from task import *
 
 class EDF:
 
-	def schedule(task_set):
+	def schedule(self, task_set):
 		# task_set = [Task0, Task1, ... , Taskn]
-		# Create the schedule
-		time = 0
-		i = 0
+		if not self.sched_test(task_set):
+			return None
+
+		# Find LCM of Periods
+		periods = []
+		for t in task_set:
+			periods.append(t.p)
+		hyperperiod = find_lcm(periods)
+
+		# Create a computation time remaining array
+		comp_remaining = [t.c for t in task_set]
+
+		# Create a deadlines array
+		deadlines = [t.d for t in task_set]
+
+		cur_task = -1 # task scheduled for current time step
+		prev_task = -1 # task scheduled for previous time step
+		prev_task_start = 0
 		schedule = []
-		while time < lcm_period(task_set):
-			earliest_deadline = sys.maxsize
-			cur_task = None
-			cur_task_start = 0
+		for time in range(hyperperiod):
+			# Calculate next deadlines
+			for i, t in enumerate(task_set):
+				deadlines[i] = (int(time / t.p) * t.p) + t.d
+				if time > 0 and time % t.p == 0:
+					comp_remaining[i] = t.c
 
-			for t in task_set:
-				if int(t.d) < earliest_deadline:
-					earliest_deadline = int(t.d)
-					sched_task = t
+			# Find task with earliest deadline
+			# If no task with remaining computation time is before its current
+			# deadline, go inactive
+			earliest_deadline = hyperperiod + 1
+			for i in range(len(task_set)):
+				if deadlines[i] >= time and deadlines[i] < earliest_deadline and comp_remaining[i] > 0:
+					earliest_deadline = deadlines[i]
+					cur_task = i
 
-			if i > 0 and sched_task is not schedule[i-1]:
-				if not schedule:
-					schedule.append(Sched_Task(cur_task, 0, time))
-				else:
-					schedule.append(Sched_Task(cur_task, cur_task_start, time))
-				i += 1
-				cur_task_start = time
+			# If different task is scheduled or current task is completed,
+			# add previous task to schedule
+			if cur_task is not prev_task and not time == 0:
+				schedule.append(Sched_Task(task_set[prev_task], prev_task_start, time))
+				prev_task_start = time
 
-			time += 1
+			comp_remaining[cur_task] -= 1
+			prev_task = cur_task
+			cur_task = -1
 
 		return schedule
 
-	def sched_test(task_set):
-		schedulable = False
-
+	def sched_test(self, task_set):
 		# If -- schedulability test success, return True
 		sum = 0
 		for task in task_set:
-			sum = sum + (int(task.c) / int(task.p))
-
+			sum += (int(task.c) / int(task.p))
 		if sum <= 1:
-			schedulable = True
-
+			return True
 		# Else -- return False
-		return schedulable
+		return False
