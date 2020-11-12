@@ -4,6 +4,7 @@ import csv
 from task import *
 from edf_alg import EDF
 from rms_alg import RMS
+from llf_alg import LLF
 
 def read_csv(filename):
     task_set = []
@@ -45,6 +46,14 @@ def main():
         print("EDF not schedulable")
     else:
         write_csv("edf.csv", edf_sched)
+
+    # LLF schedule
+    llf = LLF()
+    llf_sched = llf.schedule(task_set)
+    if llf_sched is None:
+        print("EDF not schedulable")
+    else:
+        write_csv("llf.csv", llf_sched)
 
 if __name__ == "__main__":
     main()
