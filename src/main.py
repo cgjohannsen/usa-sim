@@ -3,6 +3,7 @@ import csv
 
 from task import *
 from edf_alg import EDF
+from rms_alg import RMS
 
 def read_csv(filename):
     task_set = []
@@ -14,8 +15,18 @@ def read_csv(filename):
 
     return task_set
 
+def write_csv(filename, sched_set):
+    to_write = []
+
+    for t in sched_set:
+        to_write.append([t.task.id, t.start_time, t.end_time])
+
+    with open(filename, 'w', newline='') as f:
+        writer = csv.writer(f)
+        writer.writerows(to_write)
+
 def main():
-    # PArse command line input
+    # Parse command line input
     parser = argparse.ArgumentParser(description='Simulate uniprocessor algorithms.')
     parser.add_argument('file', help='csv file input with task set')
 
@@ -23,14 +34,21 @@ def main():
     args = parser.parse_args()
     task_set = read_csv(args.file)
 
-    # EDF schedule
-    if EDF.sched_test(task_set):
-        edf_sched = EDF.schedule(task_set)
-        print(edf_sched)
-        for t in edf_sched:
-            print(t.task.id)
+    # RMS schedule
+    rms = RMS()
+    rms_sched = rms.schedule(task_set)
+    if rms_sched is None:
+        print("RMS not schedulable")
     else:
-        print("Noit schedulable")
+        write_csv("rms.csv", rms_sched)
+
+    # EDF schedule
+    #if EDF.sched_test(task_set):
+    #    edf_sched = EDF.schedule(task_set)
+    #    for t in edf_sched:
+    #        print(t.task.id + ", " + str(t.start_time) + ", " + str(t.end_time))
+    #else:
+    #    print("Not schedulable")
 
 if __name__ == "__main__":
     main()

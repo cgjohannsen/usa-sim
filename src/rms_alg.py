@@ -2,21 +2,11 @@
 # Task with smallest period is given highest priority
 # At any time, the highest priority task is executed
 
-
 import math
-from src.task import Task, Sched_Task
-from math import gcd
-
-
-def find_lcm(nums):
-	lcm = nums[0]
-	for i in nums[1:]:
-		lcm = lcm*i//gcd(lcm, i)
-	return lcm
-
+from task import *
 
 class RMS:
-	
+
 	def schedule(self, task_set):
 		# Order the task_set (smallest period --> largest period)
 		sorted_task_set = sorted(task_set, key=lambda x: x.p, reverse=False)
@@ -26,7 +16,7 @@ class RMS:
 			return None
 
 		num_tasks = len(task_set)
-		
+
 		# Find LCM of Periods
 		periods = []
 		for t in task_set:
@@ -98,7 +88,7 @@ class RMS:
 		if self.exact_analysis(task_set):
 			return True
 		return False
-	
+
 	def exact_analysis(self, task_set):
 		# Do exact analysis. If successful, return true. Else, false
 		for i, t in enumerate(task_set):
