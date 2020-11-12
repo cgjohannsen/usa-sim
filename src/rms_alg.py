@@ -2,7 +2,6 @@
 # Task with smallest period is given highest priority
 # At any time, the highest priority task is executed
 
-import sys
 import math
 from src.task import Task, Sched_Task
 from math import gcd
@@ -57,9 +56,17 @@ class RMS:
 
 			for i, t in enumerate(sorted_task_set):
 				# The task arrives
-				if not ready_arr[i] and (time_step % t.p == 0):
-					ready_arr[i] = True
-					comp_remaining[i] = t.c
+				# if not ready_arr[i] and (time_step % t.p == 0):
+				# 	ready_arr[i] = True
+				# 	comp_remaining[i] = t.c
+
+				if time_step % t.p == 0:
+					if not ready_arr[i]:
+						ready_arr[i] = True
+						comp_remaining[i] = t.c
+					else:
+						if time_step > 0:
+							return None
 
 				# The task is ready to run, does it need to preempt?
 				if ready_arr[i]:
@@ -99,9 +106,13 @@ class RMS:
 
 
 def main():
-	t1 = Task("T1", 10, 3, 10)
-	t2 = Task("T2", 15, 4, 15)
-	t3 = Task("T3", 5, 1, 5)
+	# t1 = Task("T1", 10, 3, 10)
+	# t2 = Task("T2", 15, 4, 15)
+	# t3 = Task("T3", 5, 1, 5)
+
+	t1 = Task("T1", 10, 2, 10)
+	t2 = Task("T2", 2, 1, 2)
+	t3 = Task("T3", 20, 5, 20)
 
 	ts = [t1, t2, t3]
 
