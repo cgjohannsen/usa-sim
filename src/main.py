@@ -5,6 +5,7 @@ from task import *
 from edf_alg import EDF
 from rms_alg import RMS
 from llf_alg import LLF
+from dms_alg import DMS
 
 def read_csv(filename):
     task_set = []
@@ -24,12 +25,12 @@ def write_csv(filename, sched_set):
 
 def main():
     # Parse command line input
-    parser = argparse.ArgumentParser(description='Simulate uniprocessor algorithms.')
-    parser.add_argument('file', help='csv file input with task set')
+    #parser = argparse.ArgumentParser(description='Simulate uniprocessor algorithms.')
+    #parser.add_argument('file', help='csv file input with task set')
 
     # Parse csv
-    args = parser.parse_args()
-    task_set = read_csv(args.file)
+    #args = parser.parse_args()
+    task_set = read_csv("test.csv")
 
     # RMS schedule
     rms = RMS()
@@ -38,6 +39,14 @@ def main():
         print("RMS not schedulable")
     else:
         write_csv("rms.csv", rms_sched)
+
+    # DMS schedule
+    dms = DMS()
+    dms_sched = dms.schedule(task_set)
+    if dms_sched is None:
+        print("DMS not schedulable")
+    else:
+        write_csv("dms.csv", dms_sched)
 
     # EDF schedule
     edf = EDF()
